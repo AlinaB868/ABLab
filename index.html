@@ -5,11 +5,30 @@
     <meta charset="utf-8" />
     <meta content="width=device-width,initial-scale=1" name="viewport" />
     <meta content="#0b1020" name="theme-color" />
+
     <meta
-      content="ABLab — independent web projects, cybersecurity learning and AI experiments."
       name="description"
+      content="ABLab — independent web projects, cybersecurity learning and AI experiments."
     />
+
     <title>ABLab — Projects, Learning &amp; Exploration</title>
+
+    <!-- LinkedIn and social media preview -->
+    <meta property="og:type" content="website" />
+    <meta
+      property="og:title"
+      content="ABLab — Web Development, Web Security &amp; AI"
+    />
+    <meta
+      property="og:description"
+      content="Hands-on projects exploring web development, cybersecurity, and AI through curiosity, experimentation, and continuous learning."
+    />
+    <meta property="og:url" content="https://alinab868.github.io/ABLab/" />
+    <meta
+      property="og:image"
+      content="https://alinab868.github.io/ABLab/assets/hero.webp"
+    />
+
     <style>
       :root {
         --bg: #0b1020;
@@ -1614,7 +1633,9 @@
         }
       }
       /* Accessible, deliberate flip control on touch devices. */
-      .flip-mobile-control { display: none; }
+      .flip-mobile-control {
+        display: none;
+      }
       @media (hover: none), (pointer: coarse) {
         .flip-mobile-control {
           display: block;
@@ -1626,10 +1647,16 @@
           border-radius: 10px;
           background: #202a46;
           color: #f4f5ff;
-          font: 700 12px Inter, system-ui, sans-serif;
+          font:
+            700 12px Inter,
+            system-ui,
+            sans-serif;
           cursor: pointer;
         }
-        .flip-mobile-control:focus-visible { outline: 3px solid #78d9ef; outline-offset: 3px; }
+        .flip-mobile-control:focus-visible {
+          outline: 3px solid #78d9ef;
+          outline-offset: 3px;
+        }
       }
     </style>
   </head>
@@ -1823,8 +1850,9 @@
               <div class="tag">CLIENT PROJECT</div>
               <h4>Elena — Professional Website</h4>
               <p class="copy">
-                A clean, welcoming website for an individual psychology practice,
-                designed to present services clearly and make it easy for visitors to get in touch.
+                A clean, welcoming website for an individual psychology
+                practice, designed to present services clearly and make it easy
+                for visitors to get in touch.
               </p>
               <div class="links">
                 <a
@@ -1876,8 +1904,9 @@
               <div class="tag">CLIENT PROJECT · IN PROGRESS</div>
               <h4>Oana — Professional Website</h4>
               <p class="copy">
-                A calm, approachable website for personal and professional development,
-                designed to introduce services and create a welcoming online presence.
+                A calm, approachable website for personal and professional
+                development, designed to introduce services and create a
+                welcoming online presence.
               </p>
               <div class="links">
                 <a
@@ -2146,7 +2175,10 @@
       toggle.addEventListener("click", () => {
         let open = navlinks.classList.toggle("open");
         toggle.setAttribute("aria-expanded", String(open));
-        toggle.setAttribute("aria-label", open ? "Close navigation" : "Open navigation");
+        toggle.setAttribute(
+          "aria-label",
+          open ? "Close navigation" : "Open navigation",
+        );
       });
       navlinks.querySelectorAll("a").forEach((a) =>
         a.addEventListener("click", () => {
@@ -2263,7 +2295,9 @@
         const mobile = matchMedia("(hover: none), (pointer: coarse)");
         function syncFlip() {
           const flipped = scene.classList.contains("is-flipped");
-          flipButton.textContent = flipped ? "Back to image ↶" : "Explore interactive simulation ↗";
+          flipButton.textContent = flipped
+            ? "Back to image ↶"
+            : "Explore interactive simulation ↗";
           flipButton.setAttribute("aria-expanded", String(flipped));
           // On touch devices, prevent keyboard focus from entering the hidden face.
           back.inert = mobile.matches && !flipped;
