@@ -1613,6 +1613,24 @@
           display: none;
         }
       }
+      /* Accessible, deliberate flip control on touch devices. */
+      .flip-mobile-control { display: none; }
+      @media (hover: none), (pointer: coarse) {
+        .flip-mobile-control {
+          display: block;
+          align-self: center;
+          min-height: 44px;
+          margin-top: 12px;
+          padding: 10px 16px;
+          border: 1px solid #a89ee477;
+          border-radius: 10px;
+          background: #202a46;
+          color: #f4f5ff;
+          font: 700 12px Inter, system-ui, sans-serif;
+          cursor: pointer;
+        }
+        .flip-mobile-control:focus-visible { outline: 3px solid #78d9ef; outline-offset: 3px; }
+      }
     </style>
   </head>
   <body>
@@ -2128,17 +2146,20 @@
       toggle.addEventListener("click", () => {
         let open = navlinks.classList.toggle("open");
         toggle.setAttribute("aria-expanded", String(open));
+        toggle.setAttribute("aria-label", open ? "Close navigation" : "Open navigation");
       });
       navlinks.querySelectorAll("a").forEach((a) =>
         a.addEventListener("click", () => {
           navlinks.classList.remove("open");
           toggle.setAttribute("aria-expanded", "false");
+          toggle.setAttribute("aria-label", "Open navigation");
         }),
       );
       document.addEventListener("keydown", (e) => {
         if (e.key === "Escape" && navlinks.classList.contains("open")) {
           navlinks.classList.remove("open");
           toggle.setAttribute("aria-expanded", "false");
+          toggle.setAttribute("aria-label", "Open navigation");
           toggle.focus();
         }
       });
@@ -2146,6 +2167,14 @@
         if (!e.target.closest(".nav") && navlinks.classList.contains("open")) {
           navlinks.classList.remove("open");
           toggle.setAttribute("aria-expanded", "false");
+          toggle.setAttribute("aria-label", "Open navigation");
+        }
+      });
+      matchMedia("(min-width: 641px)").addEventListener("change", (event) => {
+        if (event.matches) {
+          navlinks.classList.remove("open");
+          toggle.setAttribute("aria-expanded", "false");
+          toggle.setAttribute("aria-label", "Open navigation");
         }
       });
       const links = [...navlinks.querySelectorAll('a[href^="#"]')];
@@ -2190,8 +2219,9 @@
         const img = gallery.querySelector(".client-shot");
         gallery.querySelectorAll(".shot-tab").forEach((btn) =>
           btn.addEventListener("click", () => {
+            if (!btn.dataset.src) return;
             img.src = btn.dataset.src;
-            img.alt = btn.dataset.alt;
+            img.alt = btn.dataset.alt || img.alt;
             gallery.querySelectorAll(".shot-tab").forEach((other) => {
               other.classList.toggle("selected", other === btn);
               other.setAttribute("aria-pressed", String(other === btn));
@@ -2220,27 +2250,34 @@
                   : "#f2eaff";
           }),
         );
-        // Touch screens: automatic, slow alternation; pause while someone uses the demo.
-        const touch = matchMedia("(hover: none)");
-        if (
-          touch.matches &&
-          !matchMedia("(prefers-reduced-motion: reduce)").matches
-        ) {
-          let paused = false;
-          scene.addEventListener("focusin", () => (paused = true));
-          scene.addEventListener("focusout", () => (paused = false));
-          scene.addEventListener(
-            "touchstart",
-            () => {
-              paused = true;
-            },
-            { passive: true },
-          );
-          setInterval(() => {
-            if (!paused && document.visibilityState === "visible")
-              scene.classList.toggle("is-flipped");
-          }, 8500);
+        // Touch screens: explicit control keeps the interactive buttons predictable.
+        const flipButton = document.createElement("button");
+        flipButton.type = "button";
+        flipButton.className = "flip-mobile-control";
+        flipButton.textContent = "Explore interactive simulation ↗";
+        flipButton.setAttribute("aria-expanded", "false");
+        flipButton.setAttribute("aria-controls", "lab-card");
+        scene.appendChild(flipButton);
+        const front = scene.querySelector(".flip-front");
+        const back = scene.querySelector(".flip-back");
+        const mobile = matchMedia("(hover: none), (pointer: coarse)");
+        function syncFlip() {
+          const flipped = scene.classList.contains("is-flipped");
+          flipButton.textContent = flipped ? "Back to image ↶" : "Explore interactive simulation ↗";
+          flipButton.setAttribute("aria-expanded", String(flipped));
+          // On touch devices, prevent keyboard focus from entering the hidden face.
+          back.inert = mobile.matches && !flipped;
+          front.inert = mobile.matches && flipped;
         }
+        flipButton.addEventListener("click", () => {
+          scene.classList.toggle("is-flipped");
+          syncFlip();
+        });
+        mobile.addEventListener("change", () => {
+          scene.classList.remove("is-flipped");
+          syncFlip();
+        });
+        syncFlip();
       })();
     </script>
   </body>
